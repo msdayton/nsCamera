@@ -368,6 +368,7 @@ class llnl_v4:
         control_messages = []
         self.clearStatus()
         self.configADCs()
+        self.ca.latchPots()
         return self.ca.submitMessages(control_messages, " initBoard: ")
 
     def initPots(self):
@@ -455,6 +456,8 @@ class llnl_v4:
             ("ADC2_CONFIG_DATA", "81A801FF"),  # ext Vref 1.25V
             ("ADC3_CONFIG_DATA", "81A801FF"),  # ext Vref 1.25V
             ("ADC4_CONFIG_DATA", "81A801FF"),  # ext Vref 1.25V
+            ("ADC_CTL", "0000000F"),
+            ("ADC_CTL", "0000000F"),
         ]
         return self.ca.submitMessages(control_messages, " configADCs: ")
 
@@ -522,8 +525,7 @@ class llnl_v4:
                 ("HW_TRIG_EN", "1"),
             ]
 
-        control_messages = [
-            ("ADC_CTL", "0000000F"),  # configure all ADCs
+        control_messages = [#("ADC_CTL", "0000000F"),  # configure all ADCs
             (timingReg, "1"),
         ]
 
@@ -646,7 +648,7 @@ class llnl_v4:
               setting string)
         """
         if not time:
-            time = 50
+            time = 255
         if not isinstance(time, int) or time < 1 or time > 255:
             err = (
                 self.logerr + "invalid poll period submitted. Setting remains "

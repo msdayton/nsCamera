@@ -251,7 +251,10 @@ class icarus2:
                 flag = 1
         # automatically truncates sequence to 39 characters
         reversedlist = bitlist[39::-1]
-        repeats = (40 - delay) // len(reversedlist)
+        if len(reversedlist) !=0:
+            repeats = (40 - delay) // len(reversedlist)
+        else:
+            repeats = 0
         if repeats > self.nframes:
             repeats = self.nframes
         # Pattern from sequence repeated to fit inside 40 bits up to a maximum of
