@@ -24,11 +24,11 @@ from collections import OrderedDict
 class icarus2:
     def __init__(self, camassem):
         self.ca = camassem
-        self.logcrit = self.ca.logcritbase + "[Icarus2] "
-        self.logerr = self.ca.logerrbase + "[Icarus2] "
-        self.logwarn = self.ca.logwarnbase + "[Icarus2] "
-        self.loginfo = self.ca.loginfobase + "[Icarus2] "
-        self.logdebug = self.ca.logdebugbase + "[Icarus2] "
+        self.logcrit = self.ca.logcritbase + "[S4] "
+        self.logerr = self.ca.logerrbase + "[S4] "
+        self.logwarn = self.ca.logwarnbase + "[S4] "
+        self.loginfo = self.ca.loginfobase + "[S4] "
+        self.logdebug = self.ca.logdebugbase + "[S4] "
         logging.info(self.loginfo + "initializing sensor object")
         self.minframe = 0
         self.maxframe = 3
@@ -126,44 +126,44 @@ class icarus2:
 
     def setInterlacing(self, ifactor):
         """
-        Dummy function; feature is not implemented on Icarus2
+        Dummy function; feature is not implemented on S4
 
         Returns:
             integer 1
         """
         if ifactor:
             logging.warning(
-                self.logwarn + "Interlacing is not supported by the Icarus2 sensor."
+                self.logwarn + "Interlacing is not supported by the S4 sensor."
             )
         return 1
 
     def setHighFullWell(self, flag):
         """
-        Dummy function; feature is not implemented on Icarus2
+        Dummy function; feature is not implemented on S4
         """
         if flag:
             logging.warning(
-                self.logwarn + "HighFullWell mode is not supported by the Icarus2 "
+                self.logwarn + "HighFullWell mode is not supported by the S4 "
                 "sensor. "
             )
 
     def setZeroDeadTime(self, flag):
         """
-        Dummy function; feature is not implemented on Icarus2
+        Dummy function; feature is not implemented on S4
         """
         if flag:
             logging.warning(
-                self.logwarn + "ZeroDeadTime mode is not supported by the Icarus2 "
+                self.logwarn + "ZeroDeadTime mode is not supported by the S4 "
                 "sensor. "
             )
 
     def setTriggerDelay(self, delayblocks):
         """
-        Dummy function; feature is not implemented on Icarus2
+        Dummy function; feature is not implemented on S4
         """
         if delayblocks:
             logging.warning(
-                self.logwarn + "Trigger Delay is not supported by the Icarus2 "
+                self.logwarn + "Trigger Delay is not supported by the S4 "
                 "sensor. "
             )
 
@@ -519,7 +519,7 @@ class icarus2:
 
     def parseReadoff(self, frames):
         """
-        Dummy function; unnecessary for Icarus2 sensor
+        Dummy function; unnecessary for S4 sensor
         """
         return frames
 

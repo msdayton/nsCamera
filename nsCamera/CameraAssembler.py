@@ -206,7 +206,7 @@ class CameraAssembler:
             logfile: optional string, name of file to divert console output
             errtag: suffix to add to logging labels
         """
-        self.version = "2.1.1"
+        self.version = "2.2.1"
         self.currtime = 0
         self.oldtime = 0
         self.trigtime = []
@@ -445,6 +445,8 @@ class CameraAssembler:
             import nsCamera.sensors.icarus2 as snsr
         elif self.sensorname == "daedalus":
             import nsCamera.sensors.daedalus as snsr
+        elif self.sensorname == "s4":
+            import nsCamera.sensors.s4 as snsr
         else:  # catch-all for added sensors to attempt object encapsulation
             sensormodname = ".sensors." + self.sensorname
             try:
@@ -602,7 +604,10 @@ class CameraAssembler:
         self.FPGArad = rad
 
         if self.FPGANum[7] == "1":
-            sensor = "Icarus"
+            if self.sensorname == "s4":
+                sensor = "S4"
+            else:
+                sensor = "Icarus"
         elif self.FPGANum[7] == "2":
             sensor = "Daedalus"
         elif self.FPGANum[7] == "3":

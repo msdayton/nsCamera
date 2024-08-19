@@ -298,6 +298,58 @@ class llnl_v4:
                     "MON_CH8": "DACH",
                 }
             )
+elif self.ca.sensorname == "S4":
+            self.subreg_aliases = OrderedDict(
+                {
+                    "VP_TUNE": "DACA",      #tunes record length
+                    "HST_A_NDELAY": "DACB",
+                    "COL_TST_IN": "DACC",   #drives col in readout chain 
+                    "TC_ACC_IN": "DACD",    #test circuit capacitor voltage 
+                    "HST_RO_IBIAS": "DACE",
+                    "HST_RO_NC_IBIAS": "DACE",
+                    "HST_CSRC_BIAS": "DACF",#Column bias overdrive
+                    "VAB": "DACG",          #antibloom setting
+                    "VRST": "DACH",         #reset voltage setting
+                    "MON_PRES_MINUS": "MON_CH1",
+                    "MON_PRES_PLUS": "MON_CH2",
+                    "MON_TEMP": "MON_CH3",
+                    "MON_CASC_TOP": "MON_CH4",
+                    "MON_HST_OSC_R_BIAS": "MON_CH5",
+                    "MON_VAB": "MON_CH6",
+                    "MON_BG_REF": "MON_CH7",
+                    "MON_HST_RO_NC_IBIAS": "MON_CH7",
+                    "MON_VRST": "MON_CH8",
+                    "MON_CASC_BOT": "MON_CH9",
+                    "MON_VP_TUNE": "MON_CH10",
+                    "MON_TC_ACC_IN": "MON_CH11",
+                    "DOSIMETER": "MON_CH12",
+                    "MON_HST_OSC_VREF_IN": "MON_CH13",
+                    "MON_COL_TST_IN": "MON_CH14",
+                    "MON_CSRC_BIAS": "MON_CH15",
+                    "MON_HST_A_NDELAY": "MON_CH16",
+                    "MON_CHA": "MON_CH10",
+                    "MON_CHB": "MON_CH16",
+                    "MON_CHC": "MON_CH14",
+                    "MON_CHD": "MON_CH11",
+                    "MON_CHE": "MON_CH7",
+                    "MON_CHF": "MON_CH15",
+                    "MON_CHG": "MON_CH6",
+                    "MON_CHH": "MON_CH8",
+                }
+            )
+            # Read-only; identifies controls corresponding to monitors
+            self.monitor_controls = OrderedDict(
+                {
+                    "MON_CH10": "DACA",
+                    "MON_CH16": "DACB",
+                    "MON_CH14": "DACC",
+                    "MON_CH11": "DACD",
+                    "MON_CH7": "DACE",
+                    "MON_CH15": "DACF",
+                    "MON_CH6": "DACG",
+                    "MON_CH8": "DACH",
+                }
+            )
         else:  # Daedalus
             self.subreg_aliases = OrderedDict(
                 {

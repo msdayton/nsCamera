@@ -151,7 +151,7 @@ class icarus:
 
     def setInterlacing(self, ifactor):
         """
-        Dummy function; feature is not implemented on Icarus2
+        Dummy function; feature is not implemented on S4
 
         Returns:
             integer 1
