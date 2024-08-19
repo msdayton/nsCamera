@@ -13,6 +13,7 @@ contract no. DE-AC52-07NA27344 (Contract 44) between the U.S. Department of Ener
 'nsCamera' is distributed under the terms of the MIT license. All new
 contributions must be made under this license.
 
+Version: 2.2.1     (Aug 2024)
 Version: 2.1.1     (July 2021)
 Version: 2.1.0     (October 2020)
 Version: 2.0.9     (March 2020)
@@ -36,7 +37,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="nsCamera",
-    version="2.1.1",
+    version="2.2.1",
     packages=find_packages(exclude=["_archive.*", "output", "*.output", "*.output.*"]),
     install_requires=["pyserial >= 3", "numpy >= 1", "matplotlib >= 1", "cython"],
     include_package_data=True,

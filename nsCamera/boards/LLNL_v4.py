@@ -298,7 +298,7 @@ class llnl_v4:
                     "MON_CH8": "DACH",
                 }
             )
-elif self.ca.sensorname == "S4":
+        elif self.ca.sensorname == "s4":
             self.subreg_aliases = OrderedDict(
                 {
                     "VP_TUNE": "DACA",      #tunes record length

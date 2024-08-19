@@ -439,23 +439,26 @@ class CameraAssembler:
         # For regular version
 
         # get sensor
-        if self.sensorname == "icarus":
-            import nsCamera.sensors.icarus as snsr
-        elif self.sensorname == "icarus2":
-            import nsCamera.sensors.icarus2 as snsr
-        elif self.sensorname == "daedalus":
-            import nsCamera.sensors.daedalus as snsr
-        elif self.sensorname == "s4":
-            import nsCamera.sensors.s4 as snsr
-        else:  # catch-all for added sensors to attempt object encapsulation
-            sensormodname = ".sensors." + self.sensorname
-            try:
-                sensormod = importlib.import_module(sensormodname, "nsCamera")
-            except ImportError:
-                logging.critical(self.logcrit + "invalid sensor name")
-                sys.exit(1)
-            snsr = getattr(sensormod, self.sensorname)
-        self.sensor = snsr(self)
+        try:
+            # Dynamically construct the module name based on the sensor name
+            sensor_module_name = f"nsCamera.sensors.{self.sensorname}"
+            
+            # Dynamically import the sensor module
+            sensor_module = importlib.import_module(sensor_module_name)
+            
+            # Dynamically retrieve the sensor class from the module
+            sensor_class = getattr(sensor_module, self.sensorname)
+            
+            # Instantiate the sensor class
+            self.sensor = sensor_class(self)
+
+        except ImportError:
+            logging.critical(self.logcrit + f"Invalid sensor name: {self.sensorname}")
+            sys.exit(1)
+        except AttributeError:
+            logging.critical(self.logcrit + f"Sensor class not found in module: {self.sensorname}")
+            sys.exit(1)
+
 
         # kill existing connections (for reinitialize)
         if hasattr(self, "comms"):

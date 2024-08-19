@@ -165,10 +165,10 @@ class s4:
         Timing registers not implemented in S4
         """
         if side:
-        logging.warning(
-            self.logwarn + "Timing registers is not supported by the S4 "
-            "sensor. "
-        )
+            logging.warning(
+                self.logwarn + "Timing registers is not supported by the S4 "
+                "sensor. "
+            )
         return ""
 
     def setArbTiming(self, side, sequence):
@@ -176,21 +176,21 @@ class s4:
         Timing registers not implemented in S4
         """
         if side:
-        logging.warning(
-            self.logwarn + "Timing registers is not supported by the S4 "
-            "sensor. "
-        )
+            logging.warning(
+                self.logwarn + "Timing registers is not supported by the S4 "
+                "sensor. "
+            )
         return ""
 
     def getTiming(self, side, actual):
-         """
+        """
         Timing registers not implemented in S4
         """
         if side:
-        logging.warning(
-            self.logwarn + "Timing registers is not supported by the S4 "
-            "sensor. "
-        )
+            logging.warning(
+                self.logwarn + "Timing registers is not supported by the S4 "
+                "sensor. "
+            )
         return ""
 
     def setManualShutters(self, timing):
@@ -198,10 +198,10 @@ class s4:
         Timing registers not implemented in S4
         """
         if side:
-        logging.warning(
-            self.logwarn + "Timing registers is not supported by the S4 "
-            "sensor. "
-        )
+            logging.warning(
+                self.logwarn + "Timing registers is not supported by the S4 "
+                "sensor. "
+            )
         return ""
 
     def getManualTiming(self):
@@ -209,10 +209,10 @@ class s4:
         Timing registers not implemented in S4
         """
         if side:
-        logging.warning(
-            self.logwarn + "Timing registers is not supported by the S4 "
-            "sensor. "
-        )
+            logging.warning(
+                self.logwarn + "Timing registers is not supported by the S4 "
+                "sensor. "
+            )
         return ""
 
     def parseReadoff(self, frames):
@@ -222,24 +222,25 @@ class s4:
         columns wide instead of the 32 columns like icarus
         """
         def interlace_arrays(array1, array2):
-        # Ensure the arrays have the correct shape
-        assert array1.shape == (1024, 512), "array1 must be of shape (1024, 512)"
-        assert array2.shape == (1024, 512), "array2 must be of shape (1024, 512)"
-        
-        # Split both arrays into groups of 32 columns
-        groups1 = np.split(array1, 16, axis=1)  # List of 16 arrays of shape (1024, 32)
-        groups2 = np.split(array2, 16, axis=1)  # List of 16 arrays of shape (1024, 32)
-        
-        # Interlace the groups
-        interlaced_groups = []
-        for g1, g2 in zip(groups1, groups2):
-            interlaced_groups.append(g1)
-            interlaced_groups.append(g2)
-        
-        # Concatenate the interlaced groups along the column axis
-        interlaced_array = np.concatenate(interlaced_groups, axis=1)
-        
-        return interlaced_array
+            # Ensure the arrays have the correct shape
+            assert array1.shape == (1024, 512), "array1 must be of shape (1024, 512)"
+            assert array2.shape == (1024, 512), "array2 must be of shape (1024, 512)"
+            
+            # Split both arrays into groups of 32 columns
+            groups1 = np.split(array1, 16, axis=1)  # List of 16 arrays of shape (1024, 32)
+            groups2 = np.split(array2, 16, axis=1)  # List of 16 arrays of shape (1024, 32)
+            
+            # Interlace the groups
+            interlaced_groups = []
+            for g1, g2 in zip(groups1, groups2):
+                interlaced_groups.append(g1)
+                interlaced_groups.append(g2)
+            
+            # Concatenate the interlaced groups along the column axis
+            interlaced_array = np.concatenate(interlaced_groups, axis=1)
+            
+            return interlaced_array
+            
         s4_frames = []
         # Iterate two elements at a time
         for first, second in zip(frames[::2], frames[1::2]):
