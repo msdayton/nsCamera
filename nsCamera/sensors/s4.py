@@ -9,6 +9,7 @@ Version: 2.2.1  (July 2024)
 
 import itertools
 import logging
+import numpy as np
 from collections import OrderedDict
 
 
@@ -37,49 +38,27 @@ class s4:
         self.fpganumID = "1"  # last nybble of FPGA_NUM
         self.interlacing = 0
 
+
         self.sens_registers = OrderedDict(
             {
                 "VRESET_WAIT_TIME": "03E",
                 "S4_VER_SEL": "041",
                 "MISC_SENSOR_CTL": "04C",
-                "MANUAL_SHUTTERS_MODE": "050",
-                "W0_INTEGRATION": "051",
-                "W0_INTERFRAME": "052",
-                "W1_INTEGRATION": "053",
-                "W1_INTERFRAME": "054",
-                "W2_INTEGRATION": "055",
-                "W2_INTERFRAME": "056",
-                "W3_INTEGRATION": "057",
-                "W0_INTEGRATION_B": "058",
-                "W0_INTERFRAME_B": "059",
-                "W1_INTEGRATION_B": "05A",
-                "W1_INTERFRAME_B": "05B",
-                "W2_INTEGRATION_B": "05C",
-                "W2_INTERFRAME_B": "05D",
-                "W3_INTEGRATION_B": "05E",
                 "TIME_ROW_DCD": "05F",
                 "NCOLTSTEN": "046",
             }
         )
 
         self.sens_subregisters = [
-            ("MANSHUT_MODE", "MANUAL_SHUTTERS_MODE", 0, 1, True),
             ("STAT_W3TOPLEDGE1", "STAT_REG", 3, 1, False),
             ("STAT_W3TOPREDGE1", "STAT_REG", 4, 1, False),
-            ("STAT_HST_ALL_W_EN_DETECTED", "STAT_REG", 12, 1, False),
             ("REVREAD", "CTRL_REG", 4, 1, True),
             ("PDBIAS_UNREADY", "STAT_REG2", 5, 1, False),
             ("PDBIAS_LOW", "CTRL_REG", 6, 1, True),
             ("ROWDCD_CTL", "CTRL_REG", 7, 1, True),
-            ("ACCUMULATION_CTL", "MISC_SENSOR_CTL", 0, 1, True),
-            ("HST_TST_ANRST_EN", "MISC_SENSOR_CTL", 1, 1, True),
-            ("HST_TST_BNRST_EN", "MISC_SENSOR_CTL", 2, 1, True),
-            ("HST_TST_ANRST_IN", "MISC_SENSOR_CTL", 3, 1, True),
-            ("HST_TST_BNRST_IN", "MISC_SENSOR_CTL", 4, 1, True),
             ("HST_PXL_RST_EN", "MISC_SENSOR_CTL", 5, 1, True),
-            ("HST_CONT_MODE", "MISC_SENSOR_CTL", 6, 1, True),
             ("COL_DCD_EN", "MISC_SENSOR_CTL", 7, 1, True),
-            ("COL_READOUT_EN", "MISC_SENSOR_CTL", 8, 1, True),
+            ("BIASEN", "MISC_SENSOR_CTL", 8, 1, True),
             ("RDCDEN", "FPA_OSCILLATOR_SEL_ADDR", 0, 1, True),#may need to try bit pos 1 instead?
         ]
 
@@ -110,11 +89,7 @@ class s4:
             ("FPA_FRAME_INITIAL", "00000000"),
             ("FPA_FRAME_FINAL", "00000003"),
             ("FPA_ROW_INITIAL", "00000000"),
-            ("FPA_ROW_FINAL", "000003FF"),
-            ("HS_TIMING_DATA_BHI", "00000000"),
-            ("HS_TIMING_DATA_BLO", "00006666"),  # 0db6 = 2-1; 6666 = 2-2
-            ("HS_TIMING_DATA_AHI", "00000000"),
-            ("HS_TIMING_DATA_ALO", "00006666"),
+            ("FPA_ROW_FINAL", "000003FF")
         ]
 
     def setInterlacing(self, ifactor):
@@ -217,14 +192,15 @@ class s4:
 
     def parseReadoff(self, frames):
         """
-        Parse Frames for S4 sensor. Although S4 only has a single frame
-        Frame1 is used to support Column Decode 5. each slice is 64 
-        columns wide instead of the 32 columns like icarus
+        Parse Frames for single frame S4 sensor. Although each S4 readout slice is 64 columns wide 
+        instead of 32 like icarus. The Frame1 signal is used for Column Decode 5 signal.
         """
         def interlace_arrays(array1, array2):
             # Ensure the arrays have the correct shape
-            assert array1.shape == (1024, 512), "array1 must be of shape (1024, 512)"
-            assert array2.shape == (1024, 512), "array2 must be of shape (1024, 512)"
+            #array1 = array1[0:1024,0:512] #crop out any column padding
+            #array2 = array2[0:1024,0:512] #crop out any column padding
+            assert array1.shape == (1024, 512), f"array1 must be of shape (1024, 512), found {np.shape(array1)}"
+            assert array2.shape == (1024, 512), f"array2 must be of shape (1024, 512), found {np.shape(array2)}"
             
             # Split both arrays into groups of 32 columns
             groups1 = np.split(array1, 16, axis=1)  # List of 16 arrays of shape (1024, 32)
@@ -240,13 +216,18 @@ class s4:
             interlaced_array = np.concatenate(interlaced_groups, axis=1)
             
             return interlaced_array
-            
+
         s4_frames = []
+        frames = np.reshape(frames,(self.nframes,self.height,self.width))
         # Iterate two elements at a time
         for first, second in zip(frames[::2], frames[1::2]):
             s4_frames.append(interlace_arrays(first, second)) 
-
-        return np.array(s4_frames)
+        s4_frames_2d = np.array(s4_frames)
+        #s4_row_groups = np.split(s4_frames_2d[0], 4, axis=0)
+        #s4_frames = np.concatenate((np.concatenate(s4_row_groups[::2],axis=0), np.concatenate(s4_row_groups[1::2],axis=0)),axis=0)
+        #s4_frames_2d = np.array(s4_frames)
+        s4_frames_1d = s4_frames_2d.reshape((self.height,2*self.width))
+        return s4_frames_1d.astype(np.int32)
 
     def reportStatusSensor(self, statusbits):
         """

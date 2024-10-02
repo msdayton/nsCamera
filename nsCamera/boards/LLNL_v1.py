@@ -409,6 +409,13 @@ class llnl_v1:
             err8, _ = self.ca.setPotV("HST_RO_NC_IBIAS", 2.5, errflag=True)
             err9, _ = self.ca.setPotV("VRST", 0.3, tune=True, errflag=True)
             err = err0 + err1 + err2 + err3 + err4 + err5 + err6 + err7 + err8 + err9
+        if self.ca.sensorname == "s4":
+            err0, _ = self.ca.setPot("P_TUNE", 0, errflag=True)
+            err1, _ = self.ca.setPotV("TC_ACC_IN", 2.1, errflag=True)
+            err2, _ = self.ca.setPotV("VRST", 0.2, tune=True, errflag=True)
+            err3, _ = self.ca.setPotV("COL_TST_IN", 0.2, tune=True, errflag=True)
+            err4, _ = self.ca.setPot("CSRC_BIAS", 2.33, errflag=True)
+            err5, _ = self.ca.setPotV("VAB", 1.0, tune=True, errflag=True)
         else:  # Daedalus
             err0, _ = self.ca.setPotV("HST_OSC_CTL", 1.0, tune=True, errflag=True)
             err1, _ = self.ca.setPotV("HST_RO_NC_IBIAS", 1.0, errflag=True)

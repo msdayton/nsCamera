@@ -19,8 +19,9 @@ Version: 2.1.1  (July 2021)
 from .daedalus import daedalus
 from .icarus import icarus
 from .icarus2 import icarus2
+from .s4 import s4
 
-__all__ = ["icarus", "icarus2", "daedalus"]
+__all__ = ["icarus", "icarus2", "daedalus", "s4"]
 
 """
 Copyright (c) 2022, Lawrence Livermore National Security, LLC.  All rights reserved.  

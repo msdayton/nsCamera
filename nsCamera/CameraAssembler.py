@@ -34,6 +34,7 @@ import platform
 import socket
 import sys
 import time
+import nsCamera
 from datetime import datetime
 
 import matplotlib.pyplot as plt
@@ -182,7 +183,7 @@ class CameraAssembler:
         Args:
             boardname: name of FPGA board: llnl_v1, llnl_v4
             commname: name of communication interface: rs422, gige
-            sensorname: name of sensor: icarus, icarus2, daedalus
+            sensorname: name of sensor: icarus, icarus2, daedalus, s4
             verbose: optional, sets logging level
                 0: print no logging messages
                 1: print CRITICAL logging messages (camera will not operate, e.g.,
@@ -251,7 +252,7 @@ class CameraAssembler:
         self.senstiming = {}  # preserve HST setting against possible power failure
         self.sensmanual = []  # preserve manual timing
         self.inittime = 0
-        self.padToFull = False
+        self.padToFull = True
         self.abort = False
 
         self.verbmap = {
@@ -550,6 +551,10 @@ class CameraAssembler:
         self.initPowerCheck()
         self.getBoardInfo()
         self.printBoardInfo()
+        isS4 = (type(self.sensor)== nsCamera.sensors.s4)
+        if isS4:
+            self.setFrames(0,1)
+            self.setRows(0,1023)
 
     def reinitialize(self):
         """
@@ -582,7 +587,6 @@ class CameraAssembler:
         """
         invalidFPGANum = False
         interfaces = []
-
         if int(self.FPGANum[0], 16) & 8:
             if self.FPGANum[1] == "1":
                 boardtype = "LLNLv1"
@@ -592,6 +596,7 @@ class CameraAssembler:
                 boardtype = "LLNLv?"
                 invalidFPGANum = True
         else:
+
             boardtype = "SNLrevC"
             logging.warning(
                 self.logwarn + "FPGA self-identifies as SNLrevC, which is not "
@@ -1307,22 +1312,25 @@ class CameraAssembler:
         if type(frames) is not list:
             frames = [frames]
         # if this is a text string from fast readoff, do the numpy conversion now
-        if isinstance(frames[0], str):
-            frames = self.generateFrames(frames)
+        #if isinstance(frames[0], str):
+        #    frames = self.generateFrames(frames)
 
         framestemp = np.copy(frames)
         for frame in framestemp:
             try:
-                if self.padToFull:
+                isS4 = (type(self.sensor)== nsCamera.sensors.s4.s4)
+                if self.padToFull and not isS4:
                     frame.shape = (
                         self.sensor.maxheight // (self.sensor.interlacing + 1),
                         self.sensor.maxwidth,
                     )
-                else:
+                if not self.padToFull and not isS4:
                     frame.shape = (
                         self.sensor.height // (self.sensor.interlacing + 1),
                         self.sensor.width,
                     )
+                if isS4:
+                    frame = frame.reshape((1024,1024))
                 frameimg = Image.fromarray(frame)
                 namenum = filename + "_%d" % nframe
                 tifpath = os.path.join(path, prefix + namenum + ".tif")
