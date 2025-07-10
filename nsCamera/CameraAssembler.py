@@ -34,7 +34,6 @@ import sys
 import time
 import h5py
 from datetime import datetime
-
 import numpy as np
 
 from nsCamera.utils.misc import (
@@ -453,11 +452,14 @@ class CameraAssembler:
         return self.comms.arm(mode)
 
     def readFrames(self, waitOnSRAM=None, timeout=0, fast=False, columns=1):
-        frames, _, _ = self.comms.readoff(waitOnSRAM, timeout, fast, columns)
+        frames, _, _ = self.readoff(waitOnSRAM, timeout, fast, columns)
         return frames
 
     def readoff(self, waitOnSRAM=None, timeout=0, fast=None, columns=1):
-        return self.comms.readoff(waitOnSRAM, timeout, fast, columns)
+        frames,rval1,rval2 = self.comms.readoff(waitOnSRAM, timeout, fast, columns)
+        if self.sensorname == "hyperion":
+            frames = np.hstack(frames)
+        return frames,rval1,rval2
 
     def writeSerial(self, cmd, timeout=None):
         return self.comms.writeSerial(cmd, timeout)

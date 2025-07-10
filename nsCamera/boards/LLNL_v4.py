@@ -362,7 +362,7 @@ class llnl_v4:
             ("DAC_CTL", "00000009"),
             ("DAC_CTL", "0000000B"),
             ("DAC_CTL", "0000000D"),
-            ("DAC_CTL", "0000000F"),
+            ("DAC_CTL", "0000000F")
         ]
         return self.ca.submitMessages(control_messages, " latchPots: ")
 
@@ -393,11 +393,12 @@ class llnl_v4:
             self.subreglist.append(s[0])
         # TODO: self.ca.checkSensorVoltStat() # SENSOR_VOLT_STAT and SENSOR_VOLT_CTL are
         #   deactivated for v4 icarus and daedalus firmware for now, is this permanent?
-        control_messages = self.ca.sensorSpecific() + [
+        control_messages = [
             # ring w/caps=01, relax=00, ring w/o caps = 02
             ("OSC_SELECT", "00"),
             ("FPA_DIVCLK_EN_ADDR", "00000001"),
-        ]
+        ] + self.ca.sensorSpecific() #sensor specific can overide initial cntl messages
+
         return self.ca.submitMessages(control_messages, " initSensor: ")
 
     def configADCs(self):
@@ -424,7 +425,7 @@ class llnl_v4:
             ("ADC3_CONFIG_DATA", "81A801FF"),  # ext Vref 1.25V
             ("ADC4_CONFIG_DATA", "81A801FF"),  # ext Vref 1.25V
             ("ADC_CTL", "0000000F"),
-            ("ADC_CTL", "0000000F"),
+            ("ADC_CTL", "0000000F")
         ]
         return self.ca.submitMessages(control_messages, " configADCs: ")
 
@@ -631,7 +632,7 @@ class llnl_v4:
 
     def getTemp(self, scale=None):
         """
-        Read temperature sensor
+        Read FPGA Board temperature 
         Args:
             scale: temperature scale to report (defaults to C, options are F and K)
 
